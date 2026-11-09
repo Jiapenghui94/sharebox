@@ -1,5 +1,7 @@
 # ShareBox 共享夹（对等版 · 多公司）
 
+[![windows-build](https://github.com/Jiapenghui94/sharebox/actions/workflows/windows-build.yml/badge.svg)](https://github.com/Jiapenghui94/sharebox/actions/workflows/windows-build.yml)
+
 给 2–5 人小团队用的 **点对点文件共享与自动同步**。两台电脑装同一个安装包，**没有服务器，也没有客户端**：
 
 - 每个人把自己电脑上的一个文件夹共享出来；
