@@ -20,6 +20,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Run unit tests
+        shell: pwsh
+        run: python -m unittest discover -s tests -t . -v
+
       - name: Build installer
         shell: pwsh
         run: ./scripts/build-windows.ps1
