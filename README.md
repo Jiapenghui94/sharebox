@@ -292,3 +292,17 @@ python tools/ui_check.py                      # Edge 无头渲染界面并截图
 - 公开可信签名：按 `docs/SIGNPATH.md` 申请 **SignPath Foundation**（开源项目免费），发布者显示为 SignPath Foundation。
 - 内部自签名：`signing/` 下的证书与脚本只用于受控电脑，**不要提交到公开仓库**。
 - 安全约定见 `SECURITY.md`：仓库中不得出现 Tailscale key、私钥、用户数据。
+---
+
+## 17. Download & code signing
+
+Official builds are published on the GitHub Releases page:
+
+- <https://github.com/Jiapenghui94/sharebox/releases>
+
+Release binaries are code-signed by **SignPath Foundation** as part of the
+SignPath Foundation open-source signing program. The signing request is
+submitted from GitHub Actions after the public CI build succeeds.
+
+Until a release is signed, CI artifacts are available from the Actions tab and
+are clearly marked as unsigned.
