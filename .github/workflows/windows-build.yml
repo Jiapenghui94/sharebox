@@ -1,0 +1,37 @@
+name: windows-build
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build installer
+        shell: pwsh
+        run: ./scripts/build-windows.ps1
+
+      - name: Show artifact info
+        shell: pwsh
+        run: |
+          Get-Item ShareBox-Setup.exe | Format-List Name, Length
+          Get-AuthenticodeSignature ShareBox-Setup.exe | Format-List Status, StatusMessage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ShareBox-Setup-unsigned
+          path: ShareBox-Setup.exe
+          retention-days: 14

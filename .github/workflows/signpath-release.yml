@@ -1,0 +1,62 @@
+name: signpath-release
+
+# 仅在 SignPath Foundation 申请通过、并配置好仓库变量后启用。
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "版本号，例如 2.1.7"
+        required: true
+        default: "2.1.7"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-sign:
+    if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build installer
+        shell: pwsh
+        run: ./scripts/build-windows.ps1
+
+      - name: Upload unsigned installer
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sharebox-${{ inputs.version }}-unsigned
+          path: ShareBox-Setup.exe
+
+      # 把下面这一步替换成 SignPath 后台生成的 YAML。
+      # 提示：先签 ShareBox.exe，再重新打包，最后签 ShareBox-Setup.exe。
+      - name: Sign installer with SignPath
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIG }}
+          github-artifact-id: ${{ steps.upload.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Verify signature
+        shell: pwsh
+        run: |
+          Get-AuthenticodeSignature signed\ShareBox-Setup.exe | Format-List Status, StatusMessage
+          if ((Get-AuthenticodeSignature signed\ShareBox-Setup.exe).Status -ne 'Valid') {
+            throw "签名验证失败"
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ShareBox-Setup-${{ inputs.version }}-signed
+          path: signed\ShareBox-Setup.exe

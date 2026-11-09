@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+sharebox-data/
+sharebox-client/
+client/
+.ui-check/
+.buildtools/
+dist/
+build/
+*.spec
+test-out.txt
+*.zip
+
+# signing / build outputs (never commit)
+signing/
+*.pfx
+installer/payload.zip
+ShareBox-Setup*.exe
+ShareBox-Portable-*/
+ShareBox-Signed-*/

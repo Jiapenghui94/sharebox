@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>共享夹 ShareBox</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- ============================ 公司验证 / 登录 ============================ -->
+<section id="login-view" class="login-view">
+  <!-- 创建公司 -->
+  <form id="company-create-form" class="login-card wide-card" hidden>
+    <div class="brand">
+      <span class="logo">共</span>
+      <div class="brand-text">
+        <h1>创建公司</h1>
+        <p>这台电脑会成为公司里的一个共享节点</p>
+      </div>
+    </div>
+    <label class="field"><span>公司名称</span>
+      <input id="cc-name" placeholder="例如：杭州某某科技有限公司" required></label>
+    <label class="field"><span>公司验证码（至少 8 位，同事加入时要用）</span>
+      <input id="cc-code" type="password" autocomplete="new-password" required></label>
+    <label class="field"><span>再次输入公司验证码</span>
+      <input id="cc-code2" type="password" autocomplete="new-password" required></label>
+    <div class="form-divider">本机账号</div>
+    <label class="field"><span>用户名</span><input id="cc-user" value="owner" spellcheck="false" required></label>
+    <label class="field"><span>密码（至少 8 位）</span><input id="cc-pass" type="password" autocomplete="new-password" required></label>
+    <label class="field"><span>电脑名称（同事会看到）</span><input id="cc-device" placeholder="例如：张三的笔记本"></label>
+    <div id="cc-error" class="form-error" role="alert"></div>
+    <button type="submit" class="btn primary block">创建公司并进入</button>
+    <p class="login-foot"><button type="button" id="go-join" class="linklike">已有公司？加入公司</button></p>
+  </form>
+
+  <!-- 加入公司 -->
+  <form id="company-join-form" class="login-card wide-card" hidden>
+    <div class="brand">
+      <span class="logo">共</span>
+      <div class="brand-text">
+        <h1>加入公司</h1>
+        <p>向公司同事要公司编号和验证码</p>
+      </div>
+    </div>
+    <label class="field"><span>公司编号</span>
+      <input id="cj-id" placeholder="例如：ABCD-EFGH-IJKL-MNOP" spellcheck="false" required></label>
+    <label class="field"><span>公司验证码</span>
+      <input id="cj-code" type="password" autocomplete="new-password" required></label>
+    <div class="form-divider">本机账号</div>
+    <label class="field"><span>用户名</span><input id="cj-user" value="owner" spellcheck="false" required></label>
+    <label class="field"><span>密码（至少 8 位）</span><input id="cj-pass" type="password" autocomplete="new-password" required></label>
+    <label class="field"><span>电脑名称（同事会看到）</span><input id="cj-device" placeholder="例如：李四的笔记本"></label>
+    <div id="cj-error" class="form-error" role="alert"></div>
+    <button type="submit" class="btn primary block">加入公司</button>
+    <p class="login-foot"><button type="button" id="go-create" class="linklike">没有公司？创建一个</button></p>
+  </form>
+
+  <!-- 公司验证 -->
+  <form id="company-verify-form" class="login-card" hidden>
+    <div class="brand">
+      <span class="logo">共</span>
+      <div class="brand-text">
+        <h1 id="verify-company-name">公司验证</h1>
+        <p>每次进入都需要验证公司</p>
+      </div>
+    </div>
+    <label class="field"><span>公司验证码</span>
+      <input id="verify-code" type="password" autocomplete="current-password" required></label>
+    <div id="verify-error" class="form-error" role="alert"></div>
+    <button type="submit" class="btn primary block">进入公司</button>
+    <p class="login-foot">验证通过后再登录你自己的账号</p>
+  </form>
+
+  <!-- 个人账号登录 -->
+  <form id="login-form" class="login-card" autocomplete="on" hidden>
+    <div class="brand">
+      <span class="logo">共</span>
+      <div class="brand-text">
+        <h1>登录账号</h1>
+        <p id="login-company">公司已验证</p>
+      </div>
+    </div>
+    <label class="field"><span>用户名</span>
+      <input id="login-user" autocomplete="username" spellcheck="false" required></label>
+    <label class="field"><span>密码</span>
+      <input id="login-pass" type="password" autocomplete="current-password" required></label>
+    <div id="login-error" class="form-error" role="alert"></div>
+    <button type="submit" class="btn primary block" id="login-submit">登 录</button>
+    <p class="login-foot">
+      <button type="button" id="btn-forgot" class="linklike">忘记密码？用恢复文件重置</button>
+    </p>
+  </form>
+</section>
+
+<!-- ============================ 主界面 ============================ -->
+<section id="app-view" class="app-view" hidden>
+  <header class="topbar">
+    <div class="brand small">
+      <span class="logo">共</span>
+      <span class="brand-name">共享夹</span>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-btn active" data-view="mine">我的共享</button>
+      <button class="nav-btn" data-view="peers">同事共享</button>
+      <button class="nav-btn" data-view="devices">设备</button>
+      <button class="nav-btn" data-view="logs">日志</button>
+      <button class="nav-btn" data-view="account">账号</button>
+    </nav>
+    <div class="top-right">
+      <span id="who" class="who"></span>
+      <button id="btn-logout" class="btn ghost small">退出</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-head">
+        <span>我共享的文件夹</span>
+        <button id="btn-new-folder" class="icon-btn" title="添加共享">＋</button>
+      </div>
+      <ul id="folder-list" class="folder-list"></ul>
+      <div class="sidebar-foot"><span class="hint">对方能看到你勾选的文件夹</span></div>
+    </aside>
+
+    <main class="main">
+      <!-- 我的共享：文件浏览器 -->
+      <div id="mine-view" class="view">
+        <div class="main-head">
+          <nav id="crumb" class="crumb"></nav>
+          <div class="tools">
+            <input id="filter" class="filter" type="search" placeholder="筛选…" spellcheck="false">
+            <span id="perm-badge" class="badge" hidden></span>
+            <button id="btn-upload" class="btn primary small">上传</button>
+            <button id="btn-mkdir" class="btn ghost small">新建文件夹</button>
+            <button id="btn-perms" class="btn ghost small" hidden>权限</button>
+            <button id="btn-refresh" class="btn ghost small">刷新</button>
+          </div>
+        </div>
+        <div id="empty" class="empty" hidden></div>
+        <div class="table-wrap" id="table-wrap">
+          <table class="file-table">
+            <thead><tr>
+              <th class="col-name">名称</th><th class="col-size">大小</th>
+              <th class="col-time">修改时间</th><th class="col-ops"></th>
+            </tr></thead>
+            <tbody id="file-body"></tbody>
+          </table>
+        </div>
+        <div id="drop-zone" class="drop-zone" hidden><span>松开即可上传到当前目录</span></div>
+      </div>
+
+      <div id="page-view" class="page" hidden></div>
+    </main>
+  </div>
+</section>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2 id="modal-title">标题</h2>
+      <button id="modal-close" class="icon-btn" title="关闭">✕</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+    <div id="modal-foot" class="modal-foot"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<input id="file-input" type="file" multiple hidden>
+<script src="/app.js"></script>
+</body>
+</html>
