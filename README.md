@@ -308,3 +308,17 @@ submitted from GitHub Actions after the public CI build succeeds.
 
 Until a release is signed, CI artifacts are available from the Actions tab and
 are clearly marked as unsigned.
+---
+
+## 18. Tailscale sidecar (tsnet)
+
+`tsnet/` contains a small Go sidecar that joins a Tailscale tailnet with
+[tsnet](https://tailscale.com/kb/1244/tsnet) and exposes a local SOCKS5 proxy on
+`127.0.0.1:1080`. ShareBox can use it to reach peers' `100.x` addresses without
+requiring users to install the Tailscale client.
+
+- Source: `tsnet/`
+- Build: `.github/workflows/build-tsnet.yml`
+- Design and key handling: `docs/TSNET.md`
+- The auth key is never committed; it is read at runtime from
+  `SHAREBOX_TS_AUTHKEY` or `SHAREBOX_TS_AUTHKEY_FILE`.

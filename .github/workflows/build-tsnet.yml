@@ -1,0 +1,41 @@
+name: build-tsnet
+
+on:
+  push:
+    paths:
+      - "tsnet/**"
+      - ".github/workflows/build-tsnet.yml"
+  pull_request:
+    paths:
+      - "tsnet/**"
+      - ".github/workflows/build-tsnet.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: tsnet
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: tsnet/go.mod
+          cache-dependency-path: tsnet/go.sum
+
+      - name: Build sidecar
+        run: go build -trimpath -ldflags "-s -w -X main.version=${{ github.ref_name }}" -o sharebox-tsnet.exe .
+
+      - name: Smoke test
+        run: .\sharebox-tsnet.exe --version
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sharebox-tsnet
+          path: tsnet/sharebox-tsnet.exe
+          retention-days: 14
