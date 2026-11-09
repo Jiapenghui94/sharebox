@@ -322,3 +322,9 @@ requiring users to install the Tailscale client.
 - Design and key handling: `docs/TSNET.md`
 - The auth key is never committed; it is read at runtime from
   `SHAREBOX_TS_AUTHKEY` or `SHAREBOX_TS_AUTHKEY_FILE`.
+---
+
+## 19. For reviewers
+
+A compact review index (build, tests, release, signing scope, no proprietary
+components) is in [`docs/REVIEW.md`](docs/REVIEW.md).
